@@ -1,30 +1,55 @@
 # React chat app
 
-Create a chat app in ReactJS which sends chat message.
+import React, { useState } from 'react';
 
-## Basic Task
+const user_list = ["Alan", "Bob", "Carol", "Dean", "Elin"];
 
-In this assignment you will need to create a ReactJS chat application.
+const ChatApp = () => {
+  const [message, setMessage] = useState('');
+  const [chats, setChats] = useState([]);
 
-This will be a single page application, which will have a textbox to type the message and a button to send the chat.
+  const handleSendMessage = () => {
+    if (message.trim() !== '') {
+      const randomUser = user_list[Math.floor(Math.random() * user_list.length)];
+      const newChat = {
+        user: randomUser,
+        message: message,
+        likes: 0
+      };
 
-On clicking send button, show the chat message above the textbox(Refer the image). You need not have to develop the sidebar in the image. Just focus on the chat input box and the chat message thread.
+      setChats([...chats, newChat]);
+      setMessage('');
+    }
+  };
 
-For each message randomly assign a username from the below user list.
+  const handleLike = (index) => {
+    const updatedChats = [...chats];
+    updatedChats[index].likes++;
+    setChats(updatedChats);
+  };
 
-```javascript
-const user_list = ["Alan", "Bob", "Carol", "Dean", "Elin"]
-```
+  return (
+    <div>
+      <div>
+        {chats.map((chat, index) => (
+          <div key={index}>
+            <span>{chat.user}: {chat.message}</span>
+            <button onClick={() => handleLike(index)}>
+              Like ({chat.likes})
+            </button>
+          </div>
+        ))}
+      </div>
+      <div>
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
+    </div>
+  );
+};
 
-For each message, add a like button at the right end of the chat message, which on click should increase the count. Display the count next to the like button.
-
-
-
-![](assets/20221208_203258_team-chat-intro.gif)
-
-
-## (Optional: Attempt 1 or More) Stretch Goals
-
-1. Add emoji options in the chat message
-2. Add mentions(@) feature. On clikcing '@' show the list of users in the user list.
-3. Create a websocket(socket.io) server using express.js and establish a client and server communication using socket.io publish and subscribe.
+export default ChatApp;
